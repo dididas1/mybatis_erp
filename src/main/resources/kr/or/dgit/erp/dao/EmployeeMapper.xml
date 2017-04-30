@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper	namespace="kr.or.dgit.erp.dao.EmployeeMapper">
+
+	<resultMap type="Employee" id="EmployeeResult">
+		<id property="empNo" column="emp_no"/>
+		<result property="empName" column="emp_name"/>
+		<result property="Salary" column="salary"/>	
+		<result property="gender" column="gender"/>
+		<result property="hobbys" column="hobbys"/>
+		<result property="joinDate" column="joinDate"/>
+		<result property="isExist" column="isexist"/>
+		<association property="department" resultMap="kr.or.dgit.erp.dao.DepartmentMapper.DepartmentResult"/>	
+		<association property="title" resultMap="kr.or.dgit.erp.dao.TitleMapper.TitleResult"/>
+	</resultMap>
+	 
+	<!-- Select SQL -->
+    <sql id="selectSQL">
+		select *  from employee e join department d on d.dept_no=e.department join title t on e.title=t.title_no
+	</sql>
+
+	<!-- Where SQL -->
+	<sql id="whereSQL">
+		<where>
+			<if test="empNo != null">
+				e.emp_no=#{empNo}
+			</if>
+		</where>
+	</sql>
+	    
+    <!-- Select By All --> 
+    <select id="selectEmployeeByAll" resultMap="EmployeeResult">
+    	<include refid="selectSQL" />
+    	ORDER BY e.emp_no
+    </select>
+    
+    <!-- Select By No-->
+    <select id="selectEmployeeByNo" parameterType="Employee" resultMap="EmployeeResult">
+		<include refid="selectSQL"/>
+		<include refid="whereSQL"></include>
+	</select>
+	
+	<!-- insert item -->
+	<insert id="insertEmployeeItem" parameterType="Employee">
+	insert into employee values (#{empNo},#{empName},#{title.titleNo},#{salary},#{gender},#{hobbys},#{department.deptNo},#{joinDate},true)
+	</insert>
+	
+	<!-- update item -->
+	<update id="updateEmployeeItem" parameterType="Employee">
+		UPDATE client
+		<set>
+			<if test="empNo != null">emp_no=#{empNo},</if>
+			<if test="empName != null">dept_name=#{empName},</if>
+			<if test="title != null">title=#{title.titleNo},</if>
+			<if test="salary != null">salary=#{salary},</if>
+			<if test="gender != null">gender=#{gender},</if>
+			<if test="hobbys != null">hobbys=#{hobbys},</if>
+			<if test="department != null">department=#{department.deptNo},</if>
+			<if test="joinDate != null">joinDate=#{joinDate},</if>
+			<if test="isExist != null">isexist=true</if>
+		</set>
+		<include refid="whereSQL"/>
+	</update>
+	
+	<!-- Not Exist item -->
+	<update id="deleteEmployeeItem" parameterType="Employee">
+		UPDATE employee SET isexist=FALSE WHERE emp_no=#{empNo}
+	</update>
+</mapper>
+

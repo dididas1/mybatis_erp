@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper	namespace="kr.or.dgit.erp.dao.DepartmentMapper">
+
+	<resultMap type="Department" id="DepartmentResult">
+		<id property="deptNo" column="dept_no"/>
+		<result property="deptName" column="dept_name"/>
+		<result property="floor" column="floor"/>
+		<result property="isExist" column="isexist"/>
+	</resultMap>
+	 
+	<!-- Select SQL -->
+    <sql id="selectSQL">
+		select dept_no,dept_name,floor,isexist from department
+	</sql>
+
+	<!-- Where SQL -->
+	<sql id="whereSQL">
+		<where>
+			<if test="deptNo != null">
+				dept_no=#{deptNo}
+			</if>
+			<if test="deptName != null">
+				dept_name=#{deptName}
+			</if>
+		</where>
+	</sql>
+	    
+    <!-- Select By All --> 
+    <select id="selectDepartmentByAll" resultMap="DepartmentResult">
+    	<include refid="selectSQL" />
+    	ORDER BY dept_no
+    </select>
+    
+    <!-- Select By No-->
+    <select id="selectDepartmentByNo" parameterType="Department" resultMap="DepartmentResult">
+		<include refid="selectSQL"/>
+		<include refid="whereSQL"></include>
+	</select>
+	
+	<!-- insert item -->
+	<insert id="insertDepartmentItem" parameterType="Department">
+	insert into department values(#{deptNo},#{deptName},#{floor},true);
+	</insert>
+	
+	<!-- update item -->
+	<update id="updateDepartmentItem" parameterType="Department">
+		UPDATE client
+		<set>
+			<if test="deptNo != null">dept_no=#{deptNo},</if>
+			<if test="deptName != null">dept_name=#{deptName},</if>
+			<if test="floor != null">floor=#{floor},</if>
+			<if test="isExist != null">isexist=true</if>
+		</set>
+		<include refid="whereSQL"/>
+	</update>
+	
+	<!-- Not Exist item -->
+	<update id="deleteDepartmentItem" parameterType="Department">
+		UPDATE department SET isexist=FALSE WHERE dept_no=#{deptNo}
+	</update>
+</mapper>
+

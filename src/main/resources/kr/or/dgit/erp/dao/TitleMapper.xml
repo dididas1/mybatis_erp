@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper	namespace="kr.or.dgit.erp.dao.TitleMapper">
+
+	<resultMap type="Title" id="TitleResult">
+		<id property="titleNo" column="title_no"/>
+		<result property="titleName" column="title_name"/>
+		<result property="isExist" column="isexist"/>
+	</resultMap>
+	 
+	<!-- Select SQL -->
+    <sql id="selectSQL">
+	select title_no,title_name,isexist from title
+
+	</sql>
+
+	<!-- Where SQL -->
+	<sql id="whereSQL">
+		<where>
+			<if test="titleNo != null">
+				title_no=#{titleNo}
+			</if>
+			<if test="titleName != null">
+				title_name=#{titleName}
+			</if>
+		</where>
+	</sql>
+	    
+    <!-- Select By All --> 
+    <select id="selectTitleByAll" resultMap="TitleResult">
+    	<include refid="selectSQL" />
+    	ORDER BY title_no
+    </select>
+    
+    <!-- Select By No-->
+    <select id="selectTitleByNo" parameterType="Title" resultMap="TitleResult">
+		<include refid="selectSQL"/>
+		<include refid="whereSQL"></include>
+	</select>
+	
+	<!-- insert item -->
+	<insert id="insertTitleItem" parameterType="Title">
+		insert into title(title_no,title_name,isexist) values(#{titleNo},#{titleName},true)
+	</insert>
+	
+	<!-- update item -->
+	<update id="updateTitleItem" parameterType="Title">
+		UPDATE client
+		<set>
+			<if test="titleNo != null">title_no=#{titleNo},</if>
+			<if test="titleName != null">title_name=#{titleName},</if>
+			<if test="isExist != null">isexist=true</if>
+		</set>
+		<include refid="whereSQL"/>
+	</update>
+	
+	<!-- Not Exist item -->
+	<update id="deleteTitleItem" parameterType="Title">
+		UPDATE title SET isexist=FALSE WHERE title_no=#{titleNo}
+	</update>
+</mapper>
+
